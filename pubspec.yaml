@@ -1,0 +1,58 @@
+name: safair
+description: Air Quality Index monitoring application
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+  font_awesome_flutter: ^8.5.0
+  auto_size_text: ^2.1.0
+  fancy_bottom_navigation: ^0.3.2
+  http: ^0.12.0+2
+  geolocator: ^5.1.5
+  flutter_spinkit: ^4.0.0
+  screenshot_share_image: ^0.0.4
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: fonts/PlayfairDisplay-Regular.ttf
+
+    - family: Merriweather
+      fonts:
+        - asset: fonts/Merriweather-Regular.ttf
+
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat-Regular.ttf
+
+    - family: Digital-Display
+      fonts:
+        - asset: fonts/Digital-Display.ttf
+
+    - family: Rubik
+      fonts:
+        - asset: fonts/Rubik-Regular.ttf
+
+    - family: FiraSans
+      fonts:
+        - asset: fonts/FiraSans-Regular.ttf
+
+    - family: NotoSansJP
+      fonts:
+        - asset: fonts/NotoSansJP-Regular.otf
