@@ -72,7 +72,7 @@ class InfoCard extends StatelessWidget {
                     AutoSizeText(
                       "Prominent: $bigPollutant",
                       textAlign: TextAlign.center,
-                      presetFontSizes: [24, 20, 18],
+                      presetFontSizes: [20, 18],
                     ),
                   ],
                 ),
@@ -115,7 +115,7 @@ class InfoCard extends StatelessWidget {
                   aqiValueToCondition(aqiValue),
                   maxLines: 2,
                   textAlign: TextAlign.center,
-                  presetFontSizes: [22, 20, 18],
+                  presetFontSizes: [20, 18],
                   style: TextStyle(color: Colors.black),
                 ),
               ],

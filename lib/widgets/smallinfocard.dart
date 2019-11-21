@@ -20,7 +20,7 @@ class SmallInfoCard extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.1,
         width: 80,
         decoration: BoxDecoration(
-          color: levelColor.withOpacity(0.40),
+          color: levelColor.withOpacity(0.50),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
