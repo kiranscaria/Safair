@@ -31,7 +31,7 @@ class _AQIScreenState extends State<AQIScreen> {
 
   void updateUI(dynamic aqiData) {
     setState(() {
-      if (aqiData == null) {
+      if (aqiData['data'] == null) {
         pollutionLevel = "";
         bigPollutant = "";
         levelColor = Colors.white;
