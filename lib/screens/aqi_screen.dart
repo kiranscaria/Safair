@@ -18,9 +18,9 @@ class _AQIScreenState extends State<AQIScreen> {
   int aqiValue;
   String bigPollutant;
   String pollutionLevel;
-  int pm2_5Level;
-  double temperature;
-  double wind;
+  int pm2_5Level = 0;
+  double temperature = 0.0;
+  double wind = 0.0;
   Color levelColor;
 
   @override
@@ -31,34 +31,67 @@ class _AQIScreenState extends State<AQIScreen> {
 
   void updateUI(dynamic aqiData) {
     setState(() {
-      if (aqiData['data'] == null) {
+      if (aqiData.containsKey('data')) {
+        // Checks if 'aqi' exists in aqiData['data']
+        if (aqiData['data'].containsKey('aqi')) {
+          aqiValue = aqiData['data']['aqi'];
+          levelColor = aqiValueToColor(aqiValue);
+          pollutionLevel = aqiValueToPollutionLevel(aqiValue);
+        } else {
+          aqiValue = 0;
+        }
+
+        // Checks if 'city' exists in aqiData['data']
+        if (aqiData['data'].containsKey('city')) {
+          cityName = aqiData['data']['city']['name'];
+        } else {
+          cityName = "";
+        }
+
+        // Checks if 'dominentpol' exists in aqiData['data']
+        if (aqiData['data'].containsKey('dominentpol')) {
+          bigPollutant = aqiData['data']['dominentpol'];
+        } else {
+          bigPollutant = "";
+        }
+
+        // Checks if 'iaqi' exists in aqiData['data']
+        if (aqiData['data'].containsKey('iaqi')) {
+          // Checks if 'pm25' exists in aqiData['data']['iaqi']
+          if (aqiData['iaqi'].containsKey('pm25')) {
+            pm2_5Level = (aqiData['data']['iaqi']['pm25'].containsKey('v'))
+                ? aqiData['data']['iaqi']['pm25']['v']
+                : 0;
+          }
+
+          // Checks if 'temperature' exists in aqiData['data']['iaqi']
+          if (aqiData['iaqi'].containsKey('temperature')) {
+            temperature =
+                (aqiData['data']['iaqi']['temperature'].containsKey('v'))
+                    ? aqiData['data']['iaqi']['temperature']['v']
+                    : 0;
+          }
+
+          // Checks if 'wind' exists in aqiData['data']['iaqi']
+          if (aqiData['iaqi'].containsKey('wind')) {
+            wind = (aqiData['data']['iaqi']['wind'].containsKey('v'))
+                ? aqiData['data']['iaqi']['wind']['v']
+                : 0;
+          }
+        } else {
+          bigPollutant = "";
+        }
+      }
+      // No key named data
+      else {
         pollutionLevel = "";
         bigPollutant = "";
         levelColor = Colors.white;
-      } else {
-        aqiValue = aqiData['data']['aqi'];
-        levelColor = aqiValueToColor(aqiValue);
-        pollutionLevel = aqiValueToPollutionLevel(aqiValue);
-        cityName = (aqiData['data']['city'] != null)
-            ? aqiData['data']['city']['name']
-            : "";
-        if (aqiData['data']['iaqi'] != null) {
-          bigPollutant = aqiData['data']['dominentpol'];
-          pm2_5Level = (aqiData['data']['iaqi']['pm25'] != null)
-              ? aqiData['data']['iaqi']['pm25']['v']
-              : 0;
-          temperature = (aqiData['data']['iaqi']['t'] != null)
-              ? temperature = aqiData['data']['iaqi']['t']['v']
-              : 0.0;
-          wind = (aqiData['data']['iaqi']['w'] != null)
-              ? aqiData['data']['iaqi']['w']['v']
-              : 0.0;
-        }
-
-        print(aqiData['data']);
-
-        for (int i = 1; i < 100; i++) {}
       }
+
+      print(aqiData['data']);
+
+      for (int i = 1; i < 100; i++) {}
     });
   }
 

@@ -72,7 +72,7 @@ class InfoCard extends StatelessWidget {
                     AutoSizeText(
                       "Prominent: $bigPollutant",
                       textAlign: TextAlign.center,
-                      presetFontSizes: [20, 18],
+                      presetFontSizes: [18, 20],
                     ),
                   ],
                 ),
