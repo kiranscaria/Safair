@@ -58,14 +58,14 @@ class _AQIScreenState extends State<AQIScreen> {
         // Checks if 'iaqi' exists in aqiData['data']
         if (aqiData['data'].containsKey('iaqi')) {
           // Checks if 'pm25' exists in aqiData['data']['iaqi']
-          if (aqiData['iaqi'].containsKey('pm25')) {
+          if (aqiData['data']['iaqi'].containsKey('pm25')) {
             pm2_5Level = (aqiData['data']['iaqi']['pm25'].containsKey('v'))
                 ? aqiData['data']['iaqi']['pm25']['v']
                 : 0;
           }
 
           // Checks if 'temperature' exists in aqiData['data']['iaqi']
-          if (aqiData['iaqi'].containsKey('temperature')) {
+          if (aqiData['data']['iaqi'].containsKey('temperature')) {
             temperature =
                 (aqiData['data']['iaqi']['temperature'].containsKey('v'))
                     ? aqiData['data']['iaqi']['temperature']['v']
@@ -73,7 +73,7 @@ class _AQIScreenState extends State<AQIScreen> {
           }
 
           // Checks if 'wind' exists in aqiData['data']['iaqi']
-          if (aqiData['iaqi'].containsKey('wind')) {
+          if (aqiData['data']['iaqi'].containsKey('wind')) {
             wind = (aqiData['data']['iaqi']['wind'].containsKey('v'))
                 ? aqiData['data']['iaqi']['wind']['v']
                 : 0;
