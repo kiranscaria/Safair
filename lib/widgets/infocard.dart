@@ -72,11 +72,11 @@ class InfoCard extends StatelessWidget {
                     AutoSizeText(
                       "Prominent: $bigPollutant",
                       textAlign: TextAlign.center,
-                      presetFontSizes: [24, 20, 18],
+                      presetFontSizes: [18, 20],
                     ),
                   ],
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 // Place / City name
                 Flexible(
                   child: AutoSizeText(
@@ -86,7 +86,7 @@ class InfoCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 // Temperature, wind, Pm2.5 cards
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -110,12 +110,12 @@ class InfoCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 5),
                 AutoSizeText(
                   aqiValueToCondition(aqiValue),
                   maxLines: 2,
                   textAlign: TextAlign.center,
-                  presetFontSizes: [22, 20, 18],
+                  presetFontSizes: [20, 18],
                   style: TextStyle(color: Colors.black),
                 ),
               ],

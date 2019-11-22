@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 
 class TopBar extends StatelessWidget {
   final textColour = Colors.white;
@@ -19,8 +20,8 @@ class TopBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
-            icon: Icon(FontAwesomeIcons.locationArrow,
-                color: textColour, size: 20),
+            icon:
+                Icon(LineAwesomeIcons.map_marker, color: textColour, size: 30),
             onPressed: () {},
           ),
           Text(
@@ -32,7 +33,7 @@ class TopBar extends StatelessWidget {
                 fontWeight: FontWeight.w200),
           ),
           IconButton(
-            icon: Icon(FontAwesomeIcons.search, color: textColour, size: 20),
+            icon: Icon(LineAwesomeIcons.search, color: textColour, size: 30),
             onPressed: () {},
           )
         ],

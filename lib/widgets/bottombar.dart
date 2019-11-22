@@ -25,7 +25,7 @@ class BottomBar extends StatelessWidget {
               width: 100,
               height: 50,
               child:
-                  Icon(FontAwesomeIcons.bullhorn, color: iconColor, size: 20),
+                  Icon(FontAwesomeIcons.shareAlt, color: iconColor, size: 20),
             ),
             onTap: () {
               ScreenshotShareImage.takeScreenshotShareImage();
