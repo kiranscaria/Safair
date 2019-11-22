@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/services/aqi_helpers.dart';
+import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
 import 'package:safair/widgets/infocard.dart';
 import 'package:safair/widgets/topbar.dart';
+
+import 'city_search_screen.dart';
+import 'loading_screen.dart';
 
 class AQIScreen extends StatefulWidget {
   final locationAQI;
@@ -22,6 +27,7 @@ class _AQIScreenState extends State<AQIScreen> {
   double temperature = 0.0;
   double wind = 0.0;
   Color levelColor;
+  AQIModel aqiModel = AQIModel();
 
   @override
   void initState() {
@@ -121,7 +127,7 @@ class _AQIScreenState extends State<AQIScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              TopBar(),
+              topBar(context),
               InfoCard(
                 cityName: cityName,
                 aqiValue: aqiValue,
@@ -136,6 +142,52 @@ class _AQIScreenState extends State<AQIScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget topBar(BuildContext context) {
+    Color textColour = Colors.white;
+    double heightWidthRatio =
+        MediaQuery.of(context).size.height / MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          IconButton(
+            icon:
+                Icon(LineAwesomeIcons.map_marker, color: textColour, size: 30),
+            onPressed: () async {
+              var aqiData = await aqiModel.getLocationAQI();
+              updateUI(aqiData);
+            },
+          ),
+          Text(
+            'Safair',
+            style: TextStyle(
+                color: textColour,
+                fontSize: 20 * heightWidthRatio,
+                fontFamily: 'PlayfairDisplay',
+                fontWeight: FontWeight.w200),
+          ),
+          IconButton(
+            icon: Icon(LineAwesomeIcons.search, color: textColour, size: 30),
+            onPressed: () async {
+              var typedNamed = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CitySearchScreen(),
+                ),
+              );
+              if (typedNamed != null) {
+                var aqiData = await aqiModel.getCityAQI(typedNamed);
+                updateUI(aqiData);
+              }
+            },
+          )
+        ],
       ),
     );
   }

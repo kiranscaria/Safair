@@ -22,6 +22,10 @@ class _LoadingScreenState extends State<LoadingScreen>
   void getLocationData() async {
     var aqiData = await AQIModel().getLocationAQI();
 
+    if (!(aqiData['status'] == 'ok')) {
+      print('Getting IP based AQI');
+      aqiData = await AQIModel().getIPAddressAQI();
+    }
     print(aqiData['data']);
 
     Navigator.push(
