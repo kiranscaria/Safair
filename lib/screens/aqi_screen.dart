@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/services/aqi_helpers.dart';
 import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
 import 'package:safair/widgets/infocard.dart';
-import 'package:safair/widgets/topbar.dart';
-
 import 'city_search_screen.dart';
-import 'loading_screen.dart';
 
 class AQIScreen extends StatefulWidget {
   final locationAQI;
@@ -27,6 +25,7 @@ class _AQIScreenState extends State<AQIScreen> {
   double temperature = 0.0;
   double wind = 0.0;
   Color levelColor;
+  String url;
   AQIModel aqiModel = AQIModel();
 
   @override
@@ -49,9 +48,19 @@ class _AQIScreenState extends State<AQIScreen> {
 
         // Checks if 'city' exists in aqiData['data']
         if (aqiData['data'].containsKey('city')) {
-          cityName = aqiData['data']['city']['name'];
-        } else {
-          cityName = "";
+          // Checks if 'name' exists in aqiData['data']['city']
+          if (aqiData['data']['city'].containsKey('name')) {
+            cityName = aqiData['data']['city']['name'];
+          } else {
+            cityName = "";
+          }
+
+          // Checks if 'url' exists in aqiData['data']['city']
+          if (aqiData['data']['city'].containsKey('url')) {
+            url = aqiData['data']['city']['url'];
+          } else {
+            url = "https://aqicn.org/here";
+          }
         }
 
         // Checks if 'dominentpol' exists in aqiData['data']
@@ -94,16 +103,13 @@ class _AQIScreenState extends State<AQIScreen> {
         bigPollutant = "";
         levelColor = Colors.white;
       }
-
-      print(aqiData['data']);
-
-      for (int i = 1; i < 100; i++) {}
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -138,7 +144,7 @@ class _AQIScreenState extends State<AQIScreen> {
                 windSpeed: wind,
                 levelColor: levelColor,
               ),
-              BottomBar(),
+              BottomBar(url: url),
             ],
           ),
         ),
@@ -160,8 +166,29 @@ class _AQIScreenState extends State<AQIScreen> {
             icon:
                 Icon(LineAwesomeIcons.map_marker, color: textColour, size: 30),
             onPressed: () async {
+              Fluttertoast.showToast(
+                msg: "Getting the AQI...",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIos: 1,
+                backgroundColor: Colors.greenAccent,
+                fontSize: 16,
+              );
               var aqiData = await aqiModel.getLocationAQI();
-              updateUI(aqiData);
+
+              if (aqiData['status'] != "error") {
+                updateUI(aqiData);
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Can't get AQI now",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 3,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16,
+                );
+              }
             },
           ),
           Text(
@@ -183,7 +210,20 @@ class _AQIScreenState extends State<AQIScreen> {
               );
               if (typedNamed != null) {
                 var aqiData = await aqiModel.getCityAQI(typedNamed);
-                updateUI(aqiData);
+
+                if (aqiData['status'] == "ok") {
+                  updateUI(aqiData);
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "Can't find the city.",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIos: 3,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16,
+                  );
+                }
               }
             },
           )

@@ -26,7 +26,6 @@ class _LoadingScreenState extends State<LoadingScreen>
       print('Getting IP based AQI');
       aqiData = await AQIModel().getIPAddressAQI();
     }
-    print(aqiData['data']);
 
     Navigator.push(
       context,
