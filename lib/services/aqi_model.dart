@@ -19,7 +19,7 @@ class AQIModel {
     await location.getCurrentLocation();
 
     String queryUrl =
-        '$aqiAPI/go:${location.latitude};${location.longitude}/?token=$token';
+        '$aqiAPI/geo:${location.latitude};${location.longitude}/?token=$token';
     NetworkHelper networkHelper = NetworkHelper(url: queryUrl);
     var aqiData = await networkHelper.getData();
 
