@@ -80,17 +80,16 @@ class _AQIScreenState extends State<AQIScreen> {
           }
 
           // Checks if 'temperature' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('temperature')) {
-            temperature =
-                (aqiData['data']['iaqi']['temperature'].containsKey('v'))
-                    ? aqiData['data']['iaqi']['temperature']['v']
-                    : 0;
+          if (aqiData['data']['iaqi'].containsKey('t')) {
+            temperature = (aqiData['data']['iaqi']['t'].containsKey('v'))
+                ? aqiData['data']['iaqi']['t']['v']
+                : 0;
           }
 
           // Checks if 'wind' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('wind')) {
-            wind = (aqiData['data']['iaqi']['wind'].containsKey('v'))
-                ? aqiData['data']['iaqi']['wind']['v']
+          if (aqiData['data']['iaqi'].containsKey('w')) {
+            wind = (aqiData['data']['iaqi']['w'].containsKey('v'))
+                ? aqiData['data']['iaqi']['w']['v']
                 : 0;
           }
         } else {
