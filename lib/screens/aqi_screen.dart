@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:safair/constants.dart';
 import 'package:safair/services/aqi_helpers.dart';
 import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
@@ -114,18 +115,8 @@ class _AQIScreenState extends State<AQIScreen> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Color(0xFFBC4E9C), Color(0xFFF80759)], // Shifter
-//            colors: [Color(0xFF355c7d), Color(0xFF6c5b7b), Color(0xFFc06c84)], // red Sunset
-//            colors: [Color(0xFF4e54c8), Color(0xFF8f94fb)], // Moon Purple
-//            colors: [Color(0xFF333333), Color(0xFFDD1818)], // Pure Lust
-//            colors: [Color(0xFFA8C0FF), Color(0xFF3F2B96)], // Slight Ocean View
-//            colors: [Color(0xFFAD5389), Color(0xFF3C1053)], // expresso
-//            colors: [Color(0xFFDA4453), Color(0xFF89216B)], // vanussa
-//            colors: [Color(0xFFFDC830), Color(0xFFF37335)], // citrus peel
-//            colors: [Color(0xFFA8FF78), Color(0xFF78FFD6)], // summer dog
-//            colors: [Color(0xFFED213A), Color(0xFF93291E)],
-//            colors: [Color(0xFF8A2387), Color(0xFFE94057), Color(0xFFF27121)],
-//            colors: [Color(0xFF654EA3), Color(0xFFEAAFC8)],
+            colors: [bgTopColor, bgBottomColor], // Shifter
+//
           ),
         ),
         child: SafeArea(

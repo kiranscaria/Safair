@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:safair/constants.dart';
 
 class CitySearchScreen extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Color(0xFFBC4E9C), Color(0xFFF80759)],
+            colors: [bgTopColor, bgBottomColor],
           ),
         ),
         width: MediaQuery.of(context).size.width,

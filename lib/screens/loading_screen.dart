@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:safair/constants.dart';
 import 'package:safair/screens/aqi_screen.dart';
 import 'package:safair/services/aqi_model.dart';
 
@@ -41,7 +42,7 @@ class _LoadingScreenState extends State<LoadingScreen>
       body: Center(
         child: Container(
           child: SpinKitWave(
-            color: Color(0xFFF80759),
+            color: bgBottomColor,
             size: 80.0,
           ),
         ),
