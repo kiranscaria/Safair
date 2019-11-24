@@ -24,7 +24,7 @@ class _AQIScreenState extends State<AQIScreen> {
   String pollutionLevel;
   int pm2_5Level = 0;
   double temperature = 0.0;
-  double wind = 0.0;
+  double wind = 0;
   Color levelColor;
   String url;
   AQIModel aqiModel = AQIModel();
@@ -83,14 +83,14 @@ class _AQIScreenState extends State<AQIScreen> {
           // Checks if 'temperature' exists in aqiData['data']['iaqi']
           if (aqiData['data']['iaqi'].containsKey('t')) {
             temperature = (aqiData['data']['iaqi']['t'].containsKey('v'))
-                ? aqiData['data']['iaqi']['t']['v']
+                ? aqiData['data']['iaqi']['t']['v'] + 0.0
                 : 0;
           }
 
           // Checks if 'wind' exists in aqiData['data']['iaqi']
           if (aqiData['data']['iaqi'].containsKey('w')) {
             wind = (aqiData['data']['iaqi']['w'].containsKey('v'))
-                ? aqiData['data']['iaqi']['w']['v']
+                ? aqiData['data']['iaqi']['w']['v'] + 0.0
                 : 0;
           }
         } else {
@@ -148,7 +148,7 @@ class _AQIScreenState extends State<AQIScreen> {
         MediaQuery.of(context).size.height / MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 15.0),
+      padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
