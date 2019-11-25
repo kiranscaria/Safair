@@ -7,7 +7,7 @@ import 'package:safair/services/aqi_helpers.dart';
 import 'package:safair/widgets/aqi_meter.dart';
 import 'smallinfocard.dart';
 
-class InfoCard extends StatelessWidget {
+class InfoCard extends StatefulWidget {
   final String cityName;
   final int aqiValue;
   final String pollutionLevel;
@@ -29,6 +29,44 @@ class InfoCard extends StatelessWidget {
   });
 
   @override
+  _InfoCardState createState() => _InfoCardState();
+}
+
+class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      lowerBound: 0.0,
+      upperBound: 500.0,
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    animateAQIMeter();
+  }
+
+  @override
+  void didUpdateWidget(InfoCard oldWidget) {
+    animateAQIMeter();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void animateAQIMeter() {
+    _controller.value = 0;
+    _controller.animateTo(500.0, curve: Curves.bounceOut);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -42,9 +80,6 @@ class InfoCard extends StatelessWidget {
         elevation: 10.0,
         child: Container(
           width: (0.80 * width),
-//        height: (0.60 * MediaQuery.of(context).size.height),
-//        width: MediaQuery.of(context).size.width - 80,
-//        height: MediaQuery.of(context).size.height - 160,
           child: Container(
             margin: EdgeInsets.only(top: 20, bottom: 20),
             child: Column(
@@ -54,24 +89,34 @@ class InfoCard extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    AQIMeter(
-                      aqiValue: aqiValue,
-                      width: width,
-                      height: height,
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        return AQIMeter(
+                          aqiValue: widget.aqiValue * _controller.value ~/ 500,
+                          width: width,
+                          height: height,
+                        );
+                      },
+                      child: AQIMeter(
+                        aqiValue: widget.aqiValue,
+                        width: width,
+                        height: height,
+                      ),
                     ),
                     SizedBox(height: 8.0),
                     AutoSizeText(
-                      pollutionLevel,
+                      widget.pollutionLevel,
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       presetFontSizes: [28, 26, 24],
                       style: TextStyle(
-                        color: levelColor,
+                        color: widget.levelColor,
                       ),
                     ),
                     // Prominent Pollutant
                     AutoSizeText(
-                      "Prominent: $bigPollutant",
+                      "Prominent: ${widget.bigPollutant}",
                       textAlign: TextAlign.center,
                       presetFontSizes: [18, 16],
                     ),
@@ -81,7 +126,7 @@ class InfoCard extends StatelessWidget {
                 // Place / City name
                 Flexible(
                   child: AutoSizeText(
-                    cityName,
+                    widget.cityName,
                     presetFontSizes: [24.0, 22.0, 20.0],
                     maxLines: 2,
                     textAlign: TextAlign.center,
@@ -94,26 +139,26 @@ class InfoCard extends StatelessWidget {
                   children: <Widget>[
                     // PM2.5
                     SmallInfoCard(
-                        value: pm2_5Level.toString(),
+                        value: widget.pm2_5Level.toString(),
                         title: "pm2.5",
-                        levelColor: levelColor),
+                        levelColor: widget.levelColor),
                     // temperature
                     SmallInfoCard(
-                      value: temperature.toStringAsFixed(1),
+                      value: widget.temperature.toStringAsFixed(1),
                       title: "temp",
-                      levelColor: levelColor,
+                      levelColor: widget.levelColor,
                     ),
                     // wind-speed
                     SmallInfoCard(
-                      value: windSpeed.toStringAsFixed(1),
+                      value: widget.windSpeed.toStringAsFixed(1),
                       title: "wind",
-                      levelColor: levelColor,
+                      levelColor: widget.levelColor,
                     ),
                   ],
                 ),
                 SizedBox(height: 5),
                 AutoSizeText(
-                  aqiValueToCondition(aqiValue),
+                  aqiValueToCondition(widget.aqiValue),
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   presetFontSizes: [20, 18, 16],
