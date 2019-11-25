@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:safair/constants.dart';
 import 'package:safair/services/aqi_helpers.dart';
+import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
 import 'package:safair/widgets/infocard.dart';
-import 'package:safair/widgets/topbar.dart';
+import 'city_search_screen.dart';
 
 class AQIScreen extends StatefulWidget {
   final locationAQI;
@@ -20,8 +24,10 @@ class _AQIScreenState extends State<AQIScreen> {
   String pollutionLevel;
   int pm2_5Level = 0;
   double temperature = 0.0;
-  double wind = 0.0;
+  double wind = 0;
   Color levelColor;
+  String url;
+  AQIModel aqiModel = AQIModel();
 
   @override
   void initState() {
@@ -43,9 +49,19 @@ class _AQIScreenState extends State<AQIScreen> {
 
         // Checks if 'city' exists in aqiData['data']
         if (aqiData['data'].containsKey('city')) {
-          cityName = aqiData['data']['city']['name'];
-        } else {
-          cityName = "";
+          // Checks if 'name' exists in aqiData['data']['city']
+          if (aqiData['data']['city'].containsKey('name')) {
+            cityName = aqiData['data']['city']['name'];
+          } else {
+            cityName = "";
+          }
+
+          // Checks if 'url' exists in aqiData['data']['city']
+          if (aqiData['data']['city'].containsKey('url')) {
+            url = aqiData['data']['city']['url'];
+          } else {
+            url = "https://aqicn.org/here";
+          }
         }
 
         // Checks if 'dominentpol' exists in aqiData['data']
@@ -65,17 +81,16 @@ class _AQIScreenState extends State<AQIScreen> {
           }
 
           // Checks if 'temperature' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('temperature')) {
-            temperature =
-                (aqiData['data']['iaqi']['temperature'].containsKey('v'))
-                    ? aqiData['data']['iaqi']['temperature']['v']
-                    : 0;
+          if (aqiData['data']['iaqi'].containsKey('t')) {
+            temperature = (aqiData['data']['iaqi']['t'].containsKey('v'))
+                ? aqiData['data']['iaqi']['t']['v'] + 0.0
+                : 0;
           }
 
           // Checks if 'wind' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('wind')) {
-            wind = (aqiData['data']['iaqi']['wind'].containsKey('v'))
-                ? aqiData['data']['iaqi']['wind']['v']
+          if (aqiData['data']['iaqi'].containsKey('w')) {
+            wind = (aqiData['data']['iaqi']['w'].containsKey('v'))
+                ? aqiData['data']['iaqi']['w']['v'] + 0.0
                 : 0;
           }
         } else {
@@ -88,40 +103,27 @@ class _AQIScreenState extends State<AQIScreen> {
         bigPollutant = "";
         levelColor = Colors.white;
       }
-
-      print(aqiData['data']);
-
-      for (int i = 1; i < 100; i++) {}
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Color(0xFFBC4E9C), Color(0xFFF80759)], // Shifter
-//            colors: [Color(0xFF355c7d), Color(0xFF6c5b7b), Color(0xFFc06c84)], // red Sunset
-//            colors: [Color(0xFF4e54c8), Color(0xFF8f94fb)], // Moon Purple
-//            colors: [Color(0xFF333333), Color(0xFFDD1818)], // Pure Lust
-//            colors: [Color(0xFFA8C0FF), Color(0xFF3F2B96)], // Slight Ocean View
-//            colors: [Color(0xFFAD5389), Color(0xFF3C1053)], // expresso
-//            colors: [Color(0xFFDA4453), Color(0xFF89216B)], // vanussa
-//            colors: [Color(0xFFFDC830), Color(0xFFF37335)], // citrus peel
-//            colors: [Color(0xFFA8FF78), Color(0xFF78FFD6)], // summer dog
-//            colors: [Color(0xFFED213A), Color(0xFF93291E)],
-//            colors: [Color(0xFF8A2387), Color(0xFFE94057), Color(0xFFF27121)],
-//            colors: [Color(0xFF654EA3), Color(0xFFEAAFC8)],
+            colors: [bgTopColor, bgBottomColor], // Shifter
+//
           ),
         ),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              TopBar(),
+              topBar(context),
               InfoCard(
                 cityName: cityName,
                 aqiValue: aqiValue,
@@ -132,10 +134,87 @@ class _AQIScreenState extends State<AQIScreen> {
                 windSpeed: wind,
                 levelColor: levelColor,
               ),
-              BottomBar(),
+              BottomBar(url: url),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget topBar(BuildContext context) {
+    Color textColour = Colors.white;
+    double heightWidthRatio =
+        MediaQuery.of(context).size.height / MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          IconButton(
+            icon:
+                Icon(LineAwesomeIcons.map_marker, color: textColour, size: 30),
+            onPressed: () async {
+              Fluttertoast.showToast(
+                msg: "Getting the AQI...",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIos: 1,
+                backgroundColor: Colors.greenAccent,
+                fontSize: 16,
+              );
+              var aqiData = await aqiModel.getLocationAQI();
+
+              if (aqiData['status'] != "error") {
+                updateUI(aqiData);
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Can't get AQI now",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 3,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16,
+                );
+              }
+            },
+          ),
+          Text(
+            'Safair',
+            style: TextStyle(
+                color: textColour,
+                fontSize: 20 * heightWidthRatio,
+                fontFamily: 'PlayfairDisplay',
+                fontWeight: FontWeight.w200),
+          ),
+          IconButton(
+            icon: Icon(LineAwesomeIcons.search, color: textColour, size: 30),
+            onPressed: () async {
+              var aqiData = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CitySearchScreen(),
+                ),
+              );
+
+              if (aqiData['status'] == "ok") {
+                updateUI(aqiData);
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Can't find the city.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16,
+                );
+              }
+            },
+          )
+        ],
       ),
     );
   }

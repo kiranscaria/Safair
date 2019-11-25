@@ -7,7 +7,7 @@ String aqiValueToPollutionLevel(int value) {
   else if (value > 50 && value <= 100)
     pollutionLevel = 'Moderate'; // yellow
   else if (value > 100 && value <= 150)
-    pollutionLevel = 'Unhealthy for Sensitive Groups'; // orange
+    pollutionLevel = 'Unhealthy'; // orange
   else if (value > 150 && value <= 200)
     pollutionLevel = 'Unhealthy'; // red
   else if (value > 200 && value <= 300)
@@ -52,7 +52,7 @@ String aqiValueToCondition(int value) {
     condition = "Health warnings of emergency conditions."; // purple
   else
     condition =
-        "HEALTH ALERT: everyone may experience more serious health effects"; // maroon
+        "HEALTH ALERT: Everyone may experience more serious health effects"; // maroon
 
   return condition;
 }

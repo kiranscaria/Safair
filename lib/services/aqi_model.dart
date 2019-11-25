@@ -25,4 +25,12 @@ class AQIModel {
 
     return aqiData;
   }
+
+  Future<dynamic> getIPAddressAQI() async {
+    NetworkHelper networkHelper =
+        NetworkHelper(url: '$aqiAPI/here/?token=$token');
+    var aqiData = await networkHelper.getData();
+
+    return aqiData;
+  }
 }
