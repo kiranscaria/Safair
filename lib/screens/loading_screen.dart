@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:connection_status_bar/connection_status_bar.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,27 +14,29 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen>
     with TickerProviderStateMixin {
-  double latitude;
-  double longitude;
-  StreamSubscription subscription;
+  bool _bInternetErrorVisible = true;
+  StreamSubscription _subscription;
 
   @override
   void initState() {
     super.initState();
 
-    subscription = Connectivity()
+    _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result == ConnectivityResult.mobile ||
           result == ConnectivityResult.wifi) {
         getLocationData();
+        setState(() {
+          _bInternetErrorVisible = false;
+        });
       }
     });
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    _subscription.cancel();
     super.dispose();
   }
 
@@ -43,6 +44,8 @@ class _LoadingScreenState extends State<LoadingScreen>
     var aqiData = await AQIModel().getLocationAQI();
 
     if (aqiData == null) {
+      print('Internet Error');
+    } else {
       if (!(aqiData['status'] == 'ok')) {
         print('Getting IP based AQI');
         aqiData = await AQIModel().getIPAddressAQI();
@@ -60,18 +63,40 @@ class _LoadingScreenState extends State<LoadingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            ConnectionStatusBar(),
-            Expanded(
-              flex: 20,
-              child: SpinKitWave(
-                color: bgBottomColor,
-                size: 80.0,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              Visibility(
+                key: Key('no-internet-error'),
+                visible: _bInternetErrorVisible,
+                child: Container(
+                  height: 50.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(color: Colors.redAccent),
+                  child: Center(
+                    child: Text(
+                      'Check your internet connection !!!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 20,
+                child: SpinKitWave(
+                  color: bgBottomColor,
+                  size: 80.0,
+                ),
+              ),
+              SizedBox(
+                  height:
+                      50), // To componsate for the top container(no internet)
+            ],
+          ),
         ),
       ),
     );
