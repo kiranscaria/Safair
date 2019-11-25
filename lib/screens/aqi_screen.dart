@@ -206,7 +206,7 @@ class _AQIScreenState extends State<AQIScreen> {
                   msg: "Can't find the city.",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  timeInSecForIos: 3,
+                  timeInSecForIos: 1,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16,

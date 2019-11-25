@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:connection_status_bar/connection_status_bar.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safair/constants.dart';
@@ -13,11 +17,26 @@ class _LoadingScreenState extends State<LoadingScreen>
     with TickerProviderStateMixin {
   double latitude;
   double longitude;
+  StreamSubscription subscription;
 
   @override
   void initState() {
     super.initState();
-    getLocationData();
+
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        getLocationData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   void getLocationData() async {
@@ -40,11 +59,17 @@ class _LoadingScreenState extends State<LoadingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          child: SpinKitWave(
-            color: bgBottomColor,
-            size: 80.0,
-          ),
+        child: Column(
+          children: <Widget>[
+            ConnectionStatusBar(),
+            Expanded(
+              flex: 20,
+              child: SpinKitWave(
+                color: bgBottomColor,
+                size: 80.0,
+              ),
+            ),
+          ],
         ),
       ),
     );

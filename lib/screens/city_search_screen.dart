@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/constants.dart';
 import 'package:safair/services/aqi_model.dart';
@@ -47,62 +48,79 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
                 ),
               ),
               Spacer(flex: 9),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: FlatButton(
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                        size: 26.0,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child: Container(
-                      child: TextField(
-                        autofocus: true,
-                        style: TextStyle(color: Colors.black),
-                        onChanged: (value) {
-                          cityName = value;
+              Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: FlatButton(
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 26.0,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
                         },
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Enter City Name...',
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide.none,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: TextField(
+                          autofocus: true,
+                          style: TextStyle(color: Colors.black),
+                          onChanged: (value) {
+                            cityName = value;
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Enter City Name...',
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Icon(
-                        LineAwesomeIcons.search,
-                        color: Colors.white,
-                        size: 32,
+                    Expanded(
+                      flex: 1,
+                      child: FlatButton(
+                        child: Container(
+                          width: 50.0,
+                          child: Center(
+                            child: Icon(
+                              LineAwesomeIcons.search,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          Fluttertoast.showToast(
+                            msg: "Searching ...",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIos: 1,
+                            textColor: Colors.white,
+                            fontSize: 16,
+                          );
+                          var aqiData = await AQIModel().getCityAQI(cityName);
+                          Navigator.pop(context, aqiData);
+                        },
                       ),
-                      onPressed: () async {
-                        var aqiData = await AQIModel().getCityAQI(cityName);
-                        Navigator.pop(context, aqiData);
-                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Spacer()
 //              SizedBox(height: 5),
