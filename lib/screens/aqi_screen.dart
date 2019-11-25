@@ -192,28 +192,25 @@ class _AQIScreenState extends State<AQIScreen> {
           IconButton(
             icon: Icon(LineAwesomeIcons.search, color: textColour, size: 30),
             onPressed: () async {
-              var typedNamed = await Navigator.push(
+              var aqiData = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => CitySearchScreen(),
                 ),
               );
-              if (typedNamed != null) {
-                var aqiData = await aqiModel.getCityAQI(typedNamed);
 
-                if (aqiData['status'] == "ok") {
-                  updateUI(aqiData);
-                } else {
-                  Fluttertoast.showToast(
-                    msg: "Can't find the city.",
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIos: 3,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16,
-                  );
-                }
+              if (aqiData['status'] == "ok") {
+                updateUI(aqiData);
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Can't find the city.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 3,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16,
+                );
               }
             },
           )

@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/constants.dart';
+import 'package:safair/services/aqi_model.dart';
 
 class CitySearchScreen extends StatefulWidget {
   @override
@@ -96,8 +96,9 @@ class _CitySearchScreenState extends State<CitySearchScreen> {
                         color: Colors.white,
                         size: 32,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context, cityName);
+                      onPressed: () async {
+                        var aqiData = await AQIModel().getCityAQI(cityName);
+                        Navigator.pop(context, aqiData);
                       },
                     ),
                   ),
