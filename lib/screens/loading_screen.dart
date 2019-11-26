@@ -21,6 +21,7 @@ class _LoadingScreenState extends State<LoadingScreen>
   void initState() {
     super.initState();
 
+    // listen for connection changes
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

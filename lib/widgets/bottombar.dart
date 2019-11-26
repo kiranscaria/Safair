@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:safair/constants.dart';
+import 'package:safair/screens/settings_screen.dart';
 import 'package:screenshot_share_image/screenshot_share_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,7 +43,13 @@ class BottomBar extends StatelessWidget {
           FlatButton(
             color: bgBottomColor.withAlpha(1),
             child: Icon(FontAwesomeIcons.cogs, color: iconColor, size: 20),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(),
+                  ));
+            },
           ),
         ],
       ),
