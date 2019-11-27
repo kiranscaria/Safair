@@ -116,7 +116,6 @@ class _AQIScreenState extends State<AQIScreen> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [bgTopColor, bgBottomColor], // Shifter
-//
           ),
         ),
         child: SafeArea(
