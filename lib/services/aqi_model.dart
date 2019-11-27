@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:safair/services/networking.dart';
 import 'package:safair/services/position.dart';
 

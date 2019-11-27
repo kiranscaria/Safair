@@ -42,23 +42,24 @@ class _LoadingScreenState extends State<LoadingScreen>
   }
 
   void getLocationData() async {
-    var aqiData = await AQIModel().getLocationAQI();
+    var _aqiData = await AQIModel().getLocationAQI();
 
-    if (aqiData == null) {
-      print('Internet Error');
-    } else {
-      if (!(aqiData['status'] == 'ok')) {
-        print('Getting IP based AQI');
-        aqiData = await AQIModel().getIPAddressAQI();
+    if (_aqiData == 'SocketException') {
+      _aqiData = "error";
+    } else if (_aqiData['status'] != 'ok') {
+      // try to get the aqi details based on the ip
+      _aqiData = await AQIModel().getIPAddressAQI();
+      if (_aqiData['status'] != 'ok') {
+        _aqiData['state'] = "error";
       }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AQIScreen(locationAQI: _aqiData),
+        ),
+      );
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AQIScreen(locationAQI: aqiData),
-      ),
-    );
   }
 
   @override

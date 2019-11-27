@@ -21,7 +21,15 @@ class BottomBar extends StatelessWidget {
         children: <Widget>[
           FlatButton(
             color: bgBottomColor.withAlpha(1),
-            child: Icon(FontAwesomeIcons.info, color: iconColor, size: 20),
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.info_outline, color: iconColor, size: 24),
+                Text(
+                  'More info',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
             onPressed: () async {
               Fluttertoast.showToast(
                 msg: "Connecting to source...",
@@ -35,14 +43,38 @@ class BottomBar extends StatelessWidget {
           ),
           FlatButton(
             color: bgBottomColor.withAlpha(1),
-            child: Icon(FontAwesomeIcons.shareAlt, color: iconColor, size: 20),
+            child: Column(
+              children: <Widget>[
+                Icon(
+                  Icons.share,
+                  color: iconColor,
+                  size: 24,
+                ),
+                Text(
+                  'Share',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
             onPressed: () {
               ScreenshotShareImage.takeScreenshotShareImage();
             },
           ),
           FlatButton(
             color: bgBottomColor.withAlpha(1),
-            child: Icon(FontAwesomeIcons.cogs, color: iconColor, size: 20),
+            child: Column(
+              children: <Widget>[
+                Icon(
+                  Icons.settings,
+                  color: iconColor,
+                  size: 24,
+                ),
+                Text(
+                  'Settings',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
             onPressed: () {
               Navigator.push(
                   context,
