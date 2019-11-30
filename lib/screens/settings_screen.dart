@@ -36,67 +36,76 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                color: Colors.white.withOpacity(0.80),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    padding: EdgeInsets.all(8.0),
-                    children: <Widget>[
-                      // Remainders
-                      ListTile(
-                        leading: Icon(Icons.add_alarm),
-                        title: Text('Mask remainder',
-                            style: TextStyle(fontSize: 18)),
-                        trailing: ToggleSwitch(
-                          minWidth: 50.0,
-                          initialLabelIndex: 0,
-                          activeBgColor: Colors.redAccent,
-                          activeTextColor: Colors.white,
-                          inactiveBgColor: Colors.grey,
-                          inactiveTextColor: Colors.grey[900],
-                          labels: ['Off', 'On'],
-                          onToggle: (index) {
-                            print('switched to: $index');
-                          },
-                        ),
-                      ),
-                      // Notification
-                      ExpansionTile(
-                        initiallyExpanded: true,
-                        leading: Icon(Icons.info),
-                        title: Text('AQI Status Notification',
-                            style: TextStyle(fontSize: 18)),
-                        children: <Widget>[
-                          RadioButtonGroup(
-                              labelStyle: TextStyle(fontSize: 16),
-                              picked: "Every morning",
-                              labels: <String>[
-                                "Always on",
-                                "Level changes to Unhealthy",
-                                "Every 1 hour",
-                                "Every 6 hours",
-                                "Every 24 hours",
-                                "Every morning",
-                              ],
-                              onSelected: (String selected) => print(selected)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              new SettingsCard(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsCard extends StatelessWidget {
+  const SettingsCard({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      color: Colors.white.withOpacity(0.80),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(8.0),
+          children: <Widget>[
+            // Remainders
+            ListTile(
+              leading: Icon(Icons.add_alarm),
+              title: Text('Mask remainder', style: TextStyle(fontSize: 18)),
+              trailing: ToggleSwitch(
+                minWidth: 50.0,
+                initialLabelIndex: 0,
+                activeBgColor: Colors.redAccent,
+                activeTextColor: Colors.white,
+                inactiveBgColor: Colors.grey,
+                inactiveTextColor: Colors.grey[900],
+                labels: ['Off', 'On'],
+                onToggle: (index) {
+                  print('switched to: $index');
+                },
+              ),
+            ),
+            // Notification
+            ExpansionTile(
+              initiallyExpanded: true,
+              leading: Icon(Icons.info),
+              title: Text('AQI Status Notification',
+                  style: TextStyle(fontSize: 18)),
+              children: <Widget>[
+                RadioButtonGroup(
+                    labelStyle: TextStyle(fontSize: 16),
+                    picked: "Every morning",
+                    labels: <String>[
+                      "Every minute",
+                      "Hourly",
+                      "Daily",
+                      "Weekly",
+                      "Every morning",
+                      "Level changes to Unhealthy",
+                    ],
+                    onSelected: (String selected) => print(selected)),
+              ],
+            ),
+          ],
         ),
       ),
     );
