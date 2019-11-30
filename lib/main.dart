@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safair/screens/loading_screen.dart';
-import 'package:safair/widgets/local_notification.dart';
+import 'package:safair/screens/notification_screen.dart';
 
 void main() => runApp(MyApp());
 

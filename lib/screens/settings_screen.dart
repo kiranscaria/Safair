@@ -67,6 +67,10 @@ class SettingsCard extends StatelessWidget {
           scrollDirection: Axis.vertical,
           padding: EdgeInsets.all(8.0),
           children: <Widget>[
+            // City
+            //TODO: Setting to fix the city
+            // Location Accuracy
+            //TODO: Setting to control the location accuracy
             // Remainders
             ListTile(
               leading: Icon(Icons.add_alarm),

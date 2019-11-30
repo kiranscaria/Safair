@@ -1,6 +1,10 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:safair/screens/loading_screen.dart';
+import 'package:safair/services/aqi_helpers.dart';
+import 'package:safair/services/aqi_model.dart';
 import '../services/notifications_helper.dart';
 
 class LocalNotification extends StatefulWidget {
@@ -9,6 +13,7 @@ class LocalNotification extends StatefulWidget {
 }
 
 class _LocalNotificationState extends State<LocalNotification> {
+  String body;
   final notifications = FlutterLocalNotificationsPlugin();
 
   @override
@@ -39,14 +44,29 @@ class _LocalNotificationState extends State<LocalNotification> {
         children: <Widget>[
           Text('Basics', textAlign: TextAlign.center),
           RaisedButton(
-            child: Text('Notify every minute'),
-            onPressed: () => showPeriodicNotification(
-              notifications,
-              title: 'Safair',
-              body: 'AQI : 170 | Unhealthy | Prominent: pm25',
-              repeatInterval: RepeatInterval.EveryMinute,
-            ),
-          ),
+              child: Text('Notify every minute'),
+              onPressed: () async {
+                var aqiData = await AQIModel().getLocationAQI();
+                var cleanedAQIData = cleanAQIData(aqiData);
+
+                setState(() {
+                  print(cleanedAQIData["aqiLevel"]);
+                  body = "";
+                  if (cleanedAQIData["aqiValue"] != null)
+                    body += "AQI: ${cleanedAQIData["aqiValue"]}";
+                  if (cleanedAQIData["aqiLevel"] != null)
+                    body += " | Level :  ${cleanedAQIData["aqiLevel"]} ";
+                  if (cleanedAQIData["cityName"] != null)
+                    body += " | City: ${cleanedAQIData["cityName"]} ";
+                });
+
+                return showPeriodicNotification(
+                  notifications,
+                  title: 'Safair',
+                  body: body,
+                  repeatInterval: RepeatInterval.EveryMinute,
+                );
+              }),
           RaisedButton(
             child: Text('Notify every morning'),
             onPressed: () => showFixedTimeNotification(
