@@ -1,4 +1,77 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
+
+Map<String, dynamic> cleanAQIData(dynamic aqiData) {
+  Map<String, dynamic> cleanedAQIData = Map();
+
+  if (aqiData.containsKey('data')) {
+    // Checks if 'aqi' exists in aqiData['data']
+    if (aqiData['data'].containsKey('aqi')) {
+      var aqiValue = aqiData['data']['aqi'];
+      cleanedAQIData['aqiValue'] = aqiValue;
+      cleanedAQIData['levelColor'] = aqiValueToColor(aqiValue);
+      cleanedAQIData['pollutionLevel'] = aqiValueToPollutionLevel(aqiValue);
+    } else {
+      cleanedAQIData['aqiValue'] = 0;
+      cleanedAQIData['pollutionLevel'] = "";
+      cleanedAQIData['levelColor'] = Colors.white;
+    }
+
+    // Checks if 'city' exists in aqiData['data']
+    if (aqiData['data'].containsKey('city')) {
+      // Checks if 'name' exists in aqiData['data']['city']
+      if (aqiData['data']['city'].containsKey('name')) {
+        cleanedAQIData['cityName'] = aqiData['data']['city']['name'];
+      } else {
+        cleanedAQIData['cityName'] = "";
+      }
+
+      // Checks if 'url' exists in aqiData['data']['city']
+      if (aqiData['data']['city'].containsKey('url')) {
+        cleanedAQIData['url'] = aqiData['data']['city']['url'];
+      } else {
+        cleanedAQIData['url'] = "https://aqicn.org/here";
+      }
+    }
+
+    // Checks if 'dominentpol' exists in aqiData['data']
+    if (aqiData['data'].containsKey('dominentpol')) {
+      cleanedAQIData['bigPollutant'] = aqiData['data']['dominentpol'];
+    } else {
+      cleanedAQIData['bigPollutant'] = "";
+    }
+
+    // Checks if 'iaqi' exists in aqiData['data']
+    if (aqiData['data'].containsKey('iaqi')) {
+      // Checks if 'pm25' exists in aqiData['data']['iaqi']
+      if (aqiData['data']['iaqi'].containsKey('pm25')) {
+        cleanedAQIData['pm2_5Level'] =
+            (aqiData['data']['iaqi']['pm25'].containsKey('v'))
+                ? aqiData['data']['iaqi']['pm25']['v']
+                : 0;
+      }
+
+      // Checks if 'temperature' exists in aqiData['data']['iaqi']
+      if (aqiData['data']['iaqi'].containsKey('t')) {
+        cleanedAQIData['temperature'] =
+            (aqiData['data']['iaqi']['t'].containsKey('v'))
+                ? aqiData['data']['iaqi']['t']['v'] + 0.0
+                : 0;
+      }
+
+      // Checks if 'wind' exists in aqiData['data']['iaqi']
+      if (aqiData['data']['iaqi'].containsKey('w')) {
+        cleanedAQIData['wind'] = (aqiData['data']['iaqi']['w'].containsKey('v'))
+            ? aqiData['data']['iaqi']['w']['v'] + 0.0
+            : 0;
+      }
+    }
+  } else {
+    // No key named data
+  }
+  return cleanedAQIData;
+}
 
 String aqiValueToPollutionLevel(int value) {
   String pollutionLevel;

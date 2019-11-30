@@ -32,77 +32,21 @@ class _AQIScreenState extends State<AQIScreen> {
   @override
   void initState() {
     super.initState();
-    updateUI(widget.locationAQI);
+    var cleanedAQIData = cleanAQIData(widget.locationAQI);
+    updateUI(cleanedAQIData);
   }
 
   void updateUI(dynamic aqiData) {
     setState(() {
-      if (aqiData.containsKey('data')) {
-        // Checks if 'aqi' exists in aqiData['data']
-        if (aqiData['data'].containsKey('aqi')) {
-          aqiValue = aqiData['data']['aqi'];
-          levelColor = aqiValueToColor(aqiValue);
-          pollutionLevel = aqiValueToPollutionLevel(aqiValue);
-        } else {
-          aqiValue = 0;
-        }
-
-        // Checks if 'city' exists in aqiData['data']
-        if (aqiData['data'].containsKey('city')) {
-          // Checks if 'name' exists in aqiData['data']['city']
-          if (aqiData['data']['city'].containsKey('name')) {
-            cityName = aqiData['data']['city']['name'];
-          } else {
-            cityName = "";
-          }
-
-          // Checks if 'url' exists in aqiData['data']['city']
-          if (aqiData['data']['city'].containsKey('url')) {
-            url = aqiData['data']['city']['url'];
-          } else {
-            url = "https://aqicn.org/here";
-          }
-        }
-
-        // Checks if 'dominentpol' exists in aqiData['data']
-        if (aqiData['data'].containsKey('dominentpol')) {
-          bigPollutant = aqiData['data']['dominentpol'];
-        } else {
-          bigPollutant = "";
-        }
-
-        // Checks if 'iaqi' exists in aqiData['data']
-        if (aqiData['data'].containsKey('iaqi')) {
-          // Checks if 'pm25' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('pm25')) {
-            pm2_5Level = (aqiData['data']['iaqi']['pm25'].containsKey('v'))
-                ? aqiData['data']['iaqi']['pm25']['v']
-                : 0;
-          }
-
-          // Checks if 'temperature' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('t')) {
-            temperature = (aqiData['data']['iaqi']['t'].containsKey('v'))
-                ? aqiData['data']['iaqi']['t']['v'] + 0.0
-                : 0;
-          }
-
-          // Checks if 'wind' exists in aqiData['data']['iaqi']
-          if (aqiData['data']['iaqi'].containsKey('w')) {
-            wind = (aqiData['data']['iaqi']['w'].containsKey('v'))
-                ? aqiData['data']['iaqi']['w']['v'] + 0.0
-                : 0;
-          }
-        } else {
-          bigPollutant = "";
-        }
-      }
-      // No key named data
-      else {
-        pollutionLevel = "";
-        bigPollutant = "";
-        levelColor = Colors.white;
-      }
+      cityName = aqiData["cityName"];
+      aqiValue = aqiData["aqiValue"];
+      bigPollutant = aqiData["bigPollutant"];
+      pollutionLevel = aqiData["pollutionLevel"];
+      pm2_5Level = aqiData["pm2_5Level"];
+      temperature = aqiData["temperature"];
+      wind = aqiData["wind"];
+      levelColor = aqiData["levelColor"];
+      url = aqiData["url"];
     });
   }
 
@@ -166,7 +110,8 @@ class _AQIScreenState extends State<AQIScreen> {
               var aqiData = await aqiModel.getLocationAQI();
 
               if (aqiData['status'] != "error") {
-                updateUI(aqiData);
+                var cleanedData = cleanAQIData(aqiData);
+                updateUI(cleanedData);
               } else {
                 Fluttertoast.showToast(
                   msg: "Can't get AQI now",
@@ -199,7 +144,8 @@ class _AQIScreenState extends State<AQIScreen> {
               );
 
               if (aqiData['status'] == "ok") {
-                updateUI(aqiData);
+                var cleanedData = cleanAQIData(aqiData);
+                updateUI(cleanedData);
               } else {
                 Fluttertoast.showToast(
                   msg: "Can't find the city.",
