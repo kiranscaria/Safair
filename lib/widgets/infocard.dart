@@ -12,9 +12,9 @@ class InfoCard extends StatefulWidget {
   final int aqiValue;
   final String pollutionLevel;
   final String bigPollutant;
-  final int pm2_5Level;
-  final double windSpeed;
-  final double temperature;
+  final String pm2_5Level;
+  final String windSpeed;
+  final String temperature;
   final Color levelColor;
 
   InfoCard({
@@ -93,7 +93,7 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
                       animation: _controller,
                       builder: (context, child) {
                         return AQIMeter(
-                          aqiValue: widget.aqiValue * _controller.value ~/ 500,
+                          aqiValue: widget.aqiValue,
                           width: width,
                           height: height,
                         );
@@ -139,18 +139,18 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
                   children: <Widget>[
                     // PM2.5
                     SmallInfoCard(
-                        value: widget.pm2_5Level.toString(),
+                        value: widget.pm2_5Level,
                         title: "pm2.5",
                         levelColor: widget.levelColor),
                     // temperature
                     SmallInfoCard(
-                      value: widget.temperature.toStringAsFixed(1),
+                      value: widget.temperature,
                       title: "temp",
                       levelColor: widget.levelColor,
                     ),
                     // wind-speed
                     SmallInfoCard(
-                      value: widget.windSpeed.toStringAsFixed(1),
+                      value: widget.windSpeed,
                       title: "wind",
                       levelColor: widget.levelColor,
                     ),

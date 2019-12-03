@@ -22,9 +22,9 @@ class _AQIScreenState extends State<AQIScreen> {
   int aqiValue;
   String bigPollutant;
   String pollutionLevel;
-  int pm2_5Level = 0;
-  double temperature = 0.0;
-  double wind = 0;
+  String pm2_5Level;
+  String temperature;
+  String wind;
   Color levelColor;
   String url;
   AQIModel aqiModel = AQIModel();

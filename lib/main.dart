@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'FiraSans'),
       title: 'Safair',
-      home: LocalNotification(),
+      home: LoadingScreen(),
     );
   }
 }

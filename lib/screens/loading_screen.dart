@@ -79,24 +79,17 @@ class _LoadingScreenState extends State<LoadingScreen>
                   child: Center(
                     child: Text(
                       'Check your internet connection !!!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
                 ),
               ),
               Expanded(
                 flex: 20,
-                child: SpinKitWave(
-                  color: bgBottomColor,
-                  size: 80.0,
-                ),
+                child: SpinKitWave(color: bgBottomColor, size: 80.0),
               ),
-              SizedBox(
-                  height:
-                      50), // To componsate for the top container(no internet)
+              // To compensate for the top container(no internet)
+              SizedBox(height: 50),
             ],
           ),
         ),

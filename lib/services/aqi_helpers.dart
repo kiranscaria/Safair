@@ -48,23 +48,30 @@ Map<String, dynamic> cleanAQIData(dynamic aqiData) {
       if (aqiData['data']['iaqi'].containsKey('pm25')) {
         cleanedAQIData['pm2_5Level'] =
             (aqiData['data']['iaqi']['pm25'].containsKey('v'))
-                ? aqiData['data']['iaqi']['pm25']['v']
-                : 0;
+                ? aqiData['data']['iaqi']['pm25']['v'].toString()
+                : 0.toString();
+      } else {
+        cleanedAQIData['pm2_5Level'] = "-";
       }
 
       // Checks if 'temperature' exists in aqiData['data']['iaqi']
       if (aqiData['data']['iaqi'].containsKey('t')) {
-        cleanedAQIData['temperature'] =
-            (aqiData['data']['iaqi']['t'].containsKey('v'))
-                ? aqiData['data']['iaqi']['t']['v'] + 0.0
-                : 0;
+        double temp = (aqiData['data']['iaqi']['t'].containsKey('v'))
+            ? aqiData['data']['iaqi']['t']['v'] + 0.0
+            : 0.0;
+        cleanedAQIData['temperature'] = temp.toStringAsFixed(1);
+      } else {
+        cleanedAQIData['temperature'] = "-";
       }
 
       // Checks if 'wind' exists in aqiData['data']['iaqi']
       if (aqiData['data']['iaqi'].containsKey('w')) {
-        cleanedAQIData['wind'] = (aqiData['data']['iaqi']['w'].containsKey('v'))
+        double wind = (aqiData['data']['iaqi']['w'].containsKey('v'))
             ? aqiData['data']['iaqi']['w']['v'] + 0.0
-            : 0;
+            : 0.0;
+        cleanedAQIData['wind'] = wind.toStringAsFixed(1);
+      } else {
+        cleanedAQIData['wind'] = "-";
       }
     }
   } else {

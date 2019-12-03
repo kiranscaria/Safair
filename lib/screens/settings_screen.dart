@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
+import 'package:safair/services/aqi_helpers.dart';
+import 'package:safair/services/aqi_model.dart';
+import 'package:safair/services/notifications_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../constants.dart';
@@ -45,10 +50,57 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class SettingsCard extends StatelessWidget {
-  const SettingsCard({
-    Key key,
-  }) : super(key: key);
+class SettingsCard extends StatefulWidget {
+  @override
+  _SettingsCardState createState() => _SettingsCardState();
+}
+
+class _SettingsCardState extends State<SettingsCard> {
+  bool _isMaskReminderOn = false;
+  String _statusNotificationInterval = kDefaultStatusNotificationInterval;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // set the mask reminder preference
+    getMaskReminderPref().then((result) {
+      setState(() {
+        _isMaskReminderOn = result;
+      });
+    });
+
+    // set the Status interval preference
+    getStatusNotificationPref().then((result) {
+      setState(() {
+        _statusNotificationInterval = result;
+      });
+    });
+  }
+
+  Future<bool> getMaskReminderPref() async {
+    // obtain shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // get the preference for the mask reminder
+    bool remindMask = prefs.getBool('isMaskReminderOn');
+    if (remindMask != null)
+      return remindMask;
+    else
+      return false;
+  }
+
+  Future<String> getStatusNotificationPref() async {
+    // obtain shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // get the preference for the mask reminder
+    String notificationInterval = prefs.getString('statusNotificationInterval');
+    if (notificationInterval != null)
+      return notificationInterval;
+    else
+      return kDefaultStatusNotificationInterval;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +111,7 @@ class SettingsCard extends StatelessWidget {
           topRight: Radius.circular(30),
         ),
       ),
-      color: Colors.white.withOpacity(0.80),
+      color: Colors.white.withOpacity(0.90),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
         child: ListView(
@@ -72,21 +124,21 @@ class SettingsCard extends StatelessWidget {
             // Location Accuracy
             //TODO: Setting to control the location accuracy
             // Remainders
-            ListTile(
-              leading: Icon(Icons.add_alarm),
-              title: Text('Mask remainder', style: TextStyle(fontSize: 18)),
-              trailing: ToggleSwitch(
-                minWidth: 50.0,
-                initialLabelIndex: 0,
-                activeBgColor: Colors.redAccent,
-                activeTextColor: Colors.white,
-                inactiveBgColor: Colors.grey,
-                inactiveTextColor: Colors.grey[900],
-                labels: ['Off', 'On'],
-                onToggle: (index) {
-                  print('switched to: $index');
-                },
-              ),
+            SwitchListTile(
+              title: Text('Mask reminder', style: TextStyle(fontSize: 18)),
+              value: _isMaskReminderOn,
+              secondary: Icon(Icons.add_alarm),
+              onChanged: (bool value) async {
+                // manage preferences
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isMaskReminderOn', value);
+
+                setState(() {
+                  _isMaskReminderOn = prefs.getBool('isMaskReminderOn');
+                });
+
+                // TODO: Implement the preference Change
+              },
             ),
             // Notification
             ExpansionTile(
@@ -97,16 +149,38 @@ class SettingsCard extends StatelessWidget {
               children: <Widget>[
                 RadioButtonGroup(
                     labelStyle: TextStyle(fontSize: 16),
-                    picked: "Every morning",
-                    labels: <String>[
-                      "Every minute",
-                      "Hourly",
-                      "Daily",
-                      "Weekly",
-                      "Every morning",
-                      "Level changes to Unhealthy",
-                    ],
-                    onSelected: (String selected) => print(selected)),
+                    picked: _statusNotificationInterval,
+                    labels: kStatusIntervalList,
+                    onSelected: (String selected) async {
+                      // manage preferences
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setString(
+                          'statusNotificationInterval', selected);
+
+                      setState(() {
+                        _statusNotificationInterval =
+                            prefs.getString('statusNotificationInterval');
+                      });
+
+                      switch (selected) {
+                        case kEveryMinute:
+                          setAQINotificationAtInterval(
+                              RepeatInterval.EveryMinute);
+                          break;
+                        case kHourly:
+                          setAQINotificationAtInterval(RepeatInterval.Hourly);
+                          break;
+                        case kDaily:
+                          setAQINotificationAtInterval(RepeatInterval.Daily);
+                          break;
+                        case kEveryMorning:
+                          break;
+                        case kLevelChangesToUnhealthy:
+                          break;
+                      }
+                      // TODO: Implement the preference Change
+                    }),
               ],
             ),
           ],
@@ -114,4 +188,33 @@ class SettingsCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String getNotificationBody(cleanedAQIData) {
+  print(cleanedAQIData["aqiLevel"]);
+  String body = "";
+
+  if (cleanedAQIData["aqiValue"] != null)
+    body += "AQI: ${cleanedAQIData["aqiValue"]}";
+  if (cleanedAQIData["pollutionLevel"] != null)
+    body += " | Level : ${cleanedAQIData["pollutionLevel"]}";
+  if (cleanedAQIData["cityName"] != null)
+    body += " | City: ${cleanedAQIData["cityName"]}";
+
+  return body;
+}
+
+void setAQINotificationAtInterval(RepeatInterval interval) async {
+  final notifications = FlutterLocalNotificationsPlugin();
+
+  var aqiData = await AQIModel().getLocationAQI();
+  var cleanedAQIData = cleanAQIData(aqiData);
+  var body = getNotificationBody(cleanedAQIData);
+
+  showPeriodicNotification(
+    notifications,
+    title: 'Safair',
+    body: body,
+    repeatInterval: interval,
+  );
 }

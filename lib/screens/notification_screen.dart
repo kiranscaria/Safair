@@ -13,7 +13,6 @@ class LocalNotification extends StatefulWidget {
 }
 
 class _LocalNotificationState extends State<LocalNotification> {
-  String body;
   final notifications = FlutterLocalNotificationsPlugin();
 
   @override
@@ -36,6 +35,20 @@ class _LocalNotificationState extends State<LocalNotification> {
         context, MaterialPageRoute(builder: (context) => LoadingScreen()));
   }
 
+  String getNotificationBody(cleanedAQIData) {
+    print(cleanedAQIData["aqiLevel"]);
+    String body = "";
+
+    if (cleanedAQIData["aqiValue"] != null)
+      body += "AQI: ${cleanedAQIData["aqiValue"]}";
+    if (cleanedAQIData["pollutionLevel"] != null)
+      body += " | Level : ${cleanedAQIData["pollutionLevel"]}";
+    if (cleanedAQIData["cityName"] != null)
+      body += " | City: ${cleanedAQIData["cityName"]}";
+
+    return body;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -48,19 +61,9 @@ class _LocalNotificationState extends State<LocalNotification> {
               onPressed: () async {
                 var aqiData = await AQIModel().getLocationAQI();
                 var cleanedAQIData = cleanAQIData(aqiData);
+                var body = getNotificationBody(cleanedAQIData);
 
-                setState(() {
-                  print(cleanedAQIData["aqiLevel"]);
-                  body = "";
-                  if (cleanedAQIData["aqiValue"] != null)
-                    body += "AQI: ${cleanedAQIData["aqiValue"]}";
-                  if (cleanedAQIData["aqiLevel"] != null)
-                    body += " | Level :  ${cleanedAQIData["aqiLevel"]} ";
-                  if (cleanedAQIData["cityName"] != null)
-                    body += " | City: ${cleanedAQIData["cityName"]} ";
-                });
-
-                return showPeriodicNotification(
+                showPeriodicNotification(
                   notifications,
                   title: 'Safair',
                   body: body,
