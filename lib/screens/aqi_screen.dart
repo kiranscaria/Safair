@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/constants.dart';
-import 'package:safair/services/aqi_helpers.dart';
+import 'package:safair/services/aqi_model_helpers.dart';
 import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
 import 'package:safair/widgets/infocard.dart';
@@ -115,9 +115,9 @@ class _AQIScreenState extends State<AQIScreen> {
               } else {
                 Fluttertoast.showToast(
                   msg: "Can't get AQI now",
-                  toastLength: Toast.LENGTH_LONG,
+                  toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  timeInSecForIos: 3,
+                  timeInSecForIos: 1,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16,

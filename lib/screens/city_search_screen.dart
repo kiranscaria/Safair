@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/constants.dart';
-import 'package:safair/services/aqi_helpers.dart';
 import 'package:safair/services/aqi_model.dart';
 
 class CitySearchScreen extends StatefulWidget {

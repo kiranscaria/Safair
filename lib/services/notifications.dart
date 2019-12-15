@@ -2,6 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /*
+		Show notification instantly
+ */
+Future showNotification(
+  FlutterLocalNotificationsPlugin notification, {
+  @required String title,
+  @required String body,
+  int id = 1,
+}) async {
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'safair.aqi.timed', 'Safair-AQI', 'Air Quality Index',
+      importance: Importance.High);
+  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+  await notification.show(1, title, body, platformChannelSpecifics);
+}
+
+/*
 		Show notification at a fixed time.
  */
 Future showFixedTimeNotification(
@@ -9,7 +28,7 @@ Future showFixedTimeNotification(
   @required Time time,
   @required String title,
   @required String body,
-  int id = 2,
+  int id = 1,
 }) async {
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'safair.aqi.timed', 'Safair-AQI', 'Air Quality Index');
@@ -18,7 +37,7 @@ Future showFixedTimeNotification(
       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
   await notification.showDailyAtTime(
-      2, title, body, time, platformChannelSpecifics);
+      1, title, body, time, platformChannelSpecifics);
 }
 
 /*
