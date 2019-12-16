@@ -20,8 +20,9 @@ class KeyboardDismiss extends StatelessWidget {
 
 Widget keyboardDismisser(BuildContext context, Widget child) {
   final gesture = GestureDetector(
+    behavior: HitTestBehavior.opaque,
     onTap: () {
-      FocusScope.of(context).requestFocus(FocusNode());
+      FocusScope.of(context).unfocus();
       debugPrint('Focus Changed');
     },
     child: child,

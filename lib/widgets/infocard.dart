@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:safair/services/aqi_model_helpers.dart';
+import 'package:safair/helpers/aqi_model_helpers.dart';
 import 'package:safair/widgets/aqi_meter.dart';
 import 'smallinfocard.dart';
 

@@ -4,6 +4,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safair/constants.dart';
+import 'package:safair/helpers/preference_helpers.dart';
 import 'package:safair/screens/aqi_screen.dart';
 import 'package:safair/services/aqi_model.dart';
 
@@ -42,17 +43,33 @@ class _LoadingScreenState extends State<LoadingScreen>
   }
 
   void getLocationData() async {
-    var _aqiData = await AQIModel().getLocationAQI();
+    bool gotAQIValue = false;
+
+    // check if the user has set the home city
+    String city = await getHomeCityPref();
+
+    var _aqiData = (city != "")
+        ? await AQIModel().getCityAQI(city)
+        : await AQIModel().getLocationAQI();
 
     if (_aqiData == 'SocketException') {
       _aqiData = "error";
+
+      // since socket exception
+
     } else if (_aqiData['status'] != 'ok') {
       // try to get the aqi details based on the ip
+      print('Searching for ip based aqi...');
       _aqiData = await AQIModel().getIPAddressAQI();
-      if (_aqiData['status'] != 'ok') {
-        _aqiData['state'] = "error";
+      print(_aqiData);
+
+      if (_aqiData['status'] == 'ok') {
+        gotAQIValue = true;
       }
     } else {
+      gotAQIValue = true;
+    }
+    if (gotAQIValue) {
       Navigator.push(
         context,
         MaterialPageRoute(

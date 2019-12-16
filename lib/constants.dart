@@ -18,7 +18,6 @@ const String kLevelChangesToUnhealthy = "Level changes to Unhealthy";
 const List<String> kStatusIntervalList = [
   kHourly,
   kEveryMorning,
-  kLevelChangesToUnhealthy,
 ];
 const List<String> kLocationAccuracyList = [
   'Low',

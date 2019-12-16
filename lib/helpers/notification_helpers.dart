@@ -1,7 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'aqi_model.dart';
+import '../services/aqi_model.dart';
 import 'aqi_model_helpers.dart';
-import 'notifications.dart';
+import '../services/notifications.dart';
 
 String getNotificationBody(cleanedAQIData) {
   print(cleanedAQIData["aqiLevel"]);

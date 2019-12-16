@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
-import 'package:safair/services/notification_helpers.dart';
+import 'package:safair/helpers/notification_helpers.dart';
+import 'package:safair/helpers/preference_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import 'expansion_tile_no_divider.dart';
@@ -14,24 +15,42 @@ class SettingsCard extends StatefulWidget {
 
 class _SettingsCardState extends State<SettingsCard> {
   bool _isMaskReminderOn = false;
-  String _statusNotificationInterval = kDefaultStatusNotificationInterval;
+  String _statusNotificationIntervalPref = kDefaultStatusNotificationInterval;
+  String _locationAccuracyPref = 'Default';
+  String _homeCityPref = 'Enter your city...';
   FocusNode cityNameFocusNode;
 
   @override
   void initState() {
     super.initState();
 
-    // set the mask reminder preference
+    // get the mask reminder preference
     getMaskReminderPref().then((result) {
       setState(() {
         _isMaskReminderOn = result;
       });
     });
 
-    // set the Status interval preference
+    // get the Status interval preference
     getStatusNotificationPref().then((result) {
       setState(() {
-        _statusNotificationInterval = result;
+        _statusNotificationIntervalPref = result;
+      });
+    });
+
+    // get the Home city preference
+    getHomeCityPref().then((result) {
+      if (result != '') {
+        setState(() {
+          _homeCityPref = result;
+        });
+      }
+    });
+
+    //get the location accuracy preference
+    getLocationAccuracyPref().then((result) {
+      setState(() {
+        _locationAccuracyPref = result;
       });
     });
 
@@ -44,30 +63,6 @@ class _SettingsCardState extends State<SettingsCard> {
     this.cityNameFocusNode.dispose();
 
     super.dispose();
-  }
-
-  Future<bool> getMaskReminderPref() async {
-    // obtain shared preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // get the preference for the mask reminder
-    bool remindMask = prefs.getBool('isMaskReminderOn');
-    if (remindMask != null)
-      return remindMask;
-    else
-      return false;
-  }
-
-  Future<String> getStatusNotificationPref() async {
-    // obtain shared preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // get the preference for the mask reminder
-    String notificationInterval = prefs.getString('statusNotificationInterval');
-    if (notificationInterval != null)
-      return notificationInterval;
-    else
-      return kDefaultStatusNotificationInterval;
   }
 
   @override
@@ -86,6 +81,7 @@ class _SettingsCardState extends State<SettingsCard> {
           padding: const EdgeInsets.only(top: 10),
           child: ListView(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             padding: EdgeInsets.all(8.0),
             children: <Widget>[
@@ -102,11 +98,21 @@ class _SettingsCardState extends State<SettingsCard> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Expanded(
-                        flex: 4,
+                        flex: 5,
                         child: new TextField(
                           textAlign: TextAlign.end,
                           decoration: InputDecoration.collapsed(
-                              hintText: 'Enter your city...'),
+                              hintText: _homeCityPref),
+                          onChanged: (cityName) async {
+                            // TODO: check if the city is in the list of cities
+
+                            // set the value of the preferred city
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString("homeCityPref", cityName);
+
+                            // TODO: Implement the preference change: City
+                          },
                         ),
                       ),
                       SizedBox(width: 10),
@@ -130,7 +136,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     _isMaskReminderOn = prefs.getBool('isMaskReminderOn');
                   });
 
-                  // TODO: Implement the preference Change
+                  // TODO: Implement the preference change: Mask remainder
                 },
               ),
 
@@ -146,8 +152,19 @@ class _SettingsCardState extends State<SettingsCard> {
                   RadioButtonGroup(
                     labelStyle: kMenuItemStyle,
                     labels: kLocationAccuracyList,
-                    onSelected: (String selected) {
+                    picked: _locationAccuracyPref,
+                    onSelected: (String selected) async {
+                      // set the location accuracy preferences
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setString("locationAccuracyPref", selected);
                       print(selected);
+
+                      // TODO: Implement the preference change: Location accuracy
+                      setState(() {
+                        _locationAccuracyPref =
+                            prefs.getString('locationAccuracyPref');
+                      });
                     },
                   ),
                 ],
@@ -161,18 +178,18 @@ class _SettingsCardState extends State<SettingsCard> {
                 children: <Widget>[
                   RadioButtonGroup(
                     labelStyle: kMenuItemStyle,
-                    picked: _statusNotificationInterval,
+                    picked: _statusNotificationIntervalPref,
                     labels: kStatusIntervalList,
                     onSelected: (String selected) async {
                       // manage preferences
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.setString(
-                          'statusNotificationInterval', selected);
+                          'statusNotificationIntervalPref', selected);
 
                       setState(() {
-                        _statusNotificationInterval =
-                            prefs.getString('statusNotificationInterval');
+                        _statusNotificationIntervalPref =
+                            prefs.getString('statusNotificationIntervalPref');
                       });
 
                       switch (selected) {
