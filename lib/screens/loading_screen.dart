@@ -70,7 +70,7 @@ class _LoadingScreenState extends State<LoadingScreen>
       gotAQIValue = true;
     }
     if (gotAQIValue) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => AQIScreen(locationAQI: _aqiData),
