@@ -7,6 +7,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //
+
     // Set portrait orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -15,7 +17,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'FiraSans'),
       title: 'Safair',
       home: LoadingScreen(),
-//      home: AQIScreen(),
     );
   }
 }

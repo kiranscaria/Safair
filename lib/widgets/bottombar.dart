@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:safair/constants.dart';
 import 'package:safair/screens/settings_screen.dart';
 import 'package:screenshot_share_image/screenshot_share_image.dart';
@@ -33,9 +32,9 @@ class BottomBar extends StatelessWidget {
             onPressed: () async {
               Fluttertoast.showToast(
                 msg: "Connecting to source...",
-                toastLength: Toast.LENGTH_SHORT,
+                toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.BOTTOM,
-                timeInSecForIos: 1,
+                timeInSecForIos: 3,
                 fontSize: 16,
               );
               await launch(url, forceWebView: true);
