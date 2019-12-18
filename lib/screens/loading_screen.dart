@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:safair/constants.dart';
 import 'package:safair/helpers/preference_helpers.dart';
 import 'package:safair/screens/aqi_screen.dart';
@@ -17,10 +18,22 @@ class _LoadingScreenState extends State<LoadingScreen>
     with TickerProviderStateMixin {
   bool _bInternetErrorVisible = true;
   StreamSubscription _subscription;
+  AQIModel aqiModel;
 
   @override
   void initState() {
     super.initState();
+
+    // get the preference for location accuracy
+    getLocationAccuracyPref().then((result) {
+      // check if the stored preference is valid
+      for (String acc in kLocationAccuracyList) {
+        if (acc == result) {
+          LocationAccuracy accuracy = stringToLocationAccuracy(result);
+          aqiModel = AQIModel(preferredAccuracy: accuracy);
+        }
+      }
+    });
 
     // listen for connection changes
     _subscription = Connectivity()
@@ -49,8 +62,8 @@ class _LoadingScreenState extends State<LoadingScreen>
     String city = await getHomeCityPref();
 
     var _aqiData = (city != "")
-        ? await AQIModel().getCityAQI(city)
-        : await AQIModel().getLocationAQI();
+        ? await aqiModel.getCityAQI(city)
+        : await aqiModel.getLocationAQI();
 
     if (_aqiData == 'SocketException') {
       _aqiData = "error";
@@ -60,7 +73,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     } else if (_aqiData['status'] != 'ok') {
       // try to get the aqi details based on the ip
       print('Searching for ip based aqi...');
-      _aqiData = await AQIModel().getIPAddressAQI();
+      _aqiData = await aqiModel.getIPAddressAQI();
       print(_aqiData);
 
       if (_aqiData['status'] == 'ok') {

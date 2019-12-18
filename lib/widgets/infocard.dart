@@ -79,7 +79,7 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
         ),
         elevation: 10.0,
         child: Container(
-          width: (0.80 * width),
+          width: (0.85 * width),
           child: Container(
             margin: EdgeInsets.only(top: 20, bottom: 20),
             child: Column(

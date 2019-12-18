@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:safair/constants.dart';
 import 'package:safair/helpers/aqi_model_helpers.dart';
+import 'package:safair/helpers/preference_helpers.dart';
 import 'package:safair/services/aqi_model.dart';
 import 'package:safair/widgets/bottombar.dart';
 import 'package:safair/widgets/infocard.dart';
@@ -27,13 +29,25 @@ class _AQIScreenState extends State<AQIScreen> {
   String wind;
   Color levelColor;
   String url;
-  AQIModel aqiModel = AQIModel();
+//  LocationAccuracy
+  AQIModel aqiModel;
 
   @override
   void initState() {
     super.initState();
     var cleanedAQIData = cleanAQIData(widget.locationAQI);
     updateUI(cleanedAQIData);
+
+    // get the preference for location accuracy
+    getLocationAccuracyPref().then((result) {
+      // check if the stored preference is valid
+      for (String acc in kLocationAccuracyList) {
+        if (acc == result) {
+          LocationAccuracy accuracy = stringToLocationAccuracy(result);
+          aqiModel = AQIModel(preferredAccuracy: accuracy);
+        }
+      }
+    });
   }
 
   void updateUI(dynamic aqiData) {
@@ -143,7 +157,9 @@ class _AQIScreenState extends State<AQIScreen> {
                 ),
               );
 
-              if (aqiData['status'] == "ok") {
+              if (aqiData == null) {
+              } else if (aqiData == 'SocketException') {
+              } else if (aqiData['status'] == "ok") {
                 var cleanedData = cleanAQIData(aqiData);
                 updateUI(cleanedData);
               } else {

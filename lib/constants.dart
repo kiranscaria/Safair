@@ -8,6 +8,7 @@ Color bgBottomColor = Color(0xFFF80759);
 const TextStyle kMenuItemStyle = TextStyle(fontSize: 16);
 
 // Preferences
+// for AQI Notification Interval
 const String kDefaultStatusNotificationInterval = "Every morning";
 const String kEveryMinute = "Every minute";
 const String kHourly = "Hourly";
@@ -19,9 +20,15 @@ const List<String> kStatusIntervalList = [
   kHourly,
   kEveryMorning,
 ];
+// for Location Accuracy
+const String kLow = "Low";
+const String kMedium = "Medium";
+const String kHigh = "High";
+const String kBest = "Best";
+const String kDefaultLocationAccuracy = kLow;
 const List<String> kLocationAccuracyList = [
-  'Low',
-  'Default',
-  'High',
-  'Best',
+  kLow,
+  kMedium,
+  kHigh,
+  kBest,
 ];

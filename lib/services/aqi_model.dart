@@ -1,9 +1,13 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:safair/services/networking.dart';
 import 'package:safair/services/position.dart';
 
 class AQIModel {
   final String token = 'c947b31f27ea6ab9b3f05cd0e05a7c44807fe5d7';
   String aqiAPI = 'https://api.waqi.info/feed';
+  LocationAccuracy preferredAccuracy = LocationAccuracy.low;
+
+  AQIModel({this.preferredAccuracy});
 
   Future<dynamic> getCityAQI(String cityName) async {
     NetworkHelper networkHelper =
@@ -14,7 +18,7 @@ class AQIModel {
   }
 
   Future<dynamic> getLocationAQI() async {
-    Location location = Location();
+    Location location = Location(preferredAccuracy: preferredAccuracy);
     await location.getCurrentLocation();
 
     String queryUrl =

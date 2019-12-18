@@ -1,4 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:safair/helpers/preference_helpers.dart';
+import '../constants.dart';
 import '../services/aqi_model.dart';
 import 'aqi_model_helpers.dart';
 import '../services/notifications.dart';
@@ -20,28 +23,51 @@ String getNotificationBody(cleanedAQIData) {
 void triggerAQINotificationAtInterval(RepeatInterval interval) async {
   final notification = FlutterLocalNotificationsPlugin();
 
-  var aqiData = await AQIModel().getLocationAQI();
-  var cleanedAQIData = cleanAQIData(aqiData);
-  var body = getNotificationBody(cleanedAQIData);
+  // get the preference for location accuracy
+  getLocationAccuracyPref().then((result) async {
+    var body;
 
-  showPeriodicNotification(
-    notification,
-    title: 'Safair',
-    body: body,
-    repeatInterval: interval,
-  );
+    // check if the stored preference is valid
+    for (String acc in kLocationAccuracyList) {
+      if (acc == result) {
+        LocationAccuracy accuracy = stringToLocationAccuracy(result);
+        var aqiData =
+            await AQIModel(preferredAccuracy: accuracy).getLocationAQI();
+        var cleanedAQIData = cleanAQIData(aqiData);
+        body = getNotificationBody(cleanedAQIData);
+      }
+    }
+
+    showPeriodicNotification(
+      notification,
+      title: 'Safair',
+      body: body,
+      repeatInterval: interval,
+    );
+  });
 }
 
 void triggerAQINotificationAtMorning() async {
   final notification = FlutterLocalNotificationsPlugin();
-
-  var aqiData = await AQIModel().getLocationAQI();
-  var cleanedAQIData = cleanAQIData(aqiData);
-  var body = getNotificationBody(cleanedAQIData);
   var time = Time(6, 0, 0);
 
-  showFixedTimeNotification(notification,
-      time: time, title: 'Safair', body: body);
+  // get the preference for location accuracy
+  getLocationAccuracyPref().then((result) async {
+    var body;
+
+    // check if the stored preference is valid
+    for (String acc in kLocationAccuracyList) {
+      if (acc == result) {
+        LocationAccuracy accuracy = stringToLocationAccuracy(result);
+        var aqiData =
+            await AQIModel(preferredAccuracy: accuracy).getLocationAQI();
+        var cleanedAQIData = cleanAQIData(aqiData);
+        body = getNotificationBody(cleanedAQIData);
+      }
+    }
+    showFixedTimeNotification(notification,
+        time: time, title: 'Safair', body: body);
+  });
 }
 
 void triggerAQINotificationAtUnhealthy() async {

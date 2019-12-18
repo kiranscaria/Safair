@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:safair/helpers/notification_helpers.dart';
 import 'package:safair/helpers/preference_helpers.dart';
+import 'package:safair/screens/aqi_screen.dart';
+import 'package:safair/services/aqi_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import 'expansion_tile_no_divider.dart';
@@ -16,7 +19,7 @@ class SettingsCard extends StatefulWidget {
 class _SettingsCardState extends State<SettingsCard> {
   bool _isMaskReminderOn = false;
   String _statusNotificationIntervalPref = kDefaultStatusNotificationInterval;
-  String _locationAccuracyPref = 'Default';
+  String _locationAccuracyPref = kDefaultLocationAccuracy;
   String _homeCityPref = 'Enter your city...';
   FocusNode cityNameFocusNode;
 
@@ -61,7 +64,6 @@ class _SettingsCardState extends State<SettingsCard> {
   @override
   void dispose() {
     this.cityNameFocusNode.dispose();
-
     super.dispose();
   }
 
@@ -103,7 +105,7 @@ class _SettingsCardState extends State<SettingsCard> {
                           textAlign: TextAlign.end,
                           decoration: InputDecoration.collapsed(
                               hintText: _homeCityPref),
-                          onChanged: (cityName) async {
+                          onSubmitted: (cityName) async {
                             // TODO: check if the city is in the list of cities
 
                             // set the value of the preferred city
@@ -112,6 +114,23 @@ class _SettingsCardState extends State<SettingsCard> {
                             await prefs.setString("homeCityPref", cityName);
 
                             // TODO: Implement the preference change: City
+                            String city = await getHomeCityPref();
+                            AQIModel aqiModel = AQIModel(
+                                preferredAccuracy: LocationAccuracy.low);
+
+                            var _aqiData = await aqiModel.getCityAQI(city);
+
+                            if (_aqiData == 'SocketException') {
+                              // socket exception
+                            } else if (_aqiData['status'] == 'ok') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AQIScreen(locationAQI: _aqiData),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ),
@@ -122,23 +141,24 @@ class _SettingsCardState extends State<SettingsCard> {
               ),
 
               // Mask Remainder
-              SwitchListTile(
-                title: Text('Mask reminder', style: kMenuItemStyle),
-                value: _isMaskReminderOn,
-                secondary: Icon(Icons.add_alarm),
-                onChanged: (bool value) async {
-                  // manage preferences
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  await prefs.setBool('isMaskReminderOn', value);
-
-                  setState(() {
-                    _isMaskReminderOn = prefs.getBool('isMaskReminderOn');
-                  });
-
-                  // TODO: Implement the preference change: Mask remainder
-                },
-              ),
+//              SwitchListTile(
+//                title: Text('Mask reminder', style: kMenuItemStyle),
+//                value: _isMaskReminderOn,
+//                secondary: Icon(Icons.add_alarm),
+//                onChanged: (bool value) async {
+//                  // manage preferences
+//                  SharedPreferences prefs =
+//                      await SharedPreferences.getInstance();
+//                  await prefs.setBool('isMaskReminderOn', value);
+//
+//                  setState(() {
+//                    _isMaskReminderOn = prefs.getBool('isMaskReminderOn');
+//                  });
+//
+//                  // TODO: Implement the preference change: Mask remainder
+//
+//                },
+//              ),
 
               // Location Accuracy
               ExpansionTileNoDivider(
