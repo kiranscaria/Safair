@@ -93,7 +93,7 @@ class _InfoCardState extends State<InfoCard> with TickerProviderStateMixin {
                       animation: _controller,
                       builder: (context, child) {
                         return AQIMeter(
-                          aqiValue: widget.aqiValue,
+                          aqiValue: widget.aqiValue * _controller.value ~/ 500,
                           width: width,
                           height: height,
                         );

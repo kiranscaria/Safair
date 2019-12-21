@@ -18,6 +18,7 @@ class AQIModel {
   }
 
   Future<dynamic> getLocationAQI() async {
+    print("Location Accuracy used: $preferredAccuracy");
     Location location = Location(preferredAccuracy: preferredAccuracy);
     await location.getCurrentLocation();
 

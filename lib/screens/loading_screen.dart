@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -30,7 +31,13 @@ class _LoadingScreenState extends State<LoadingScreen>
       for (String acc in kLocationAccuracyList) {
         if (acc == result) {
           LocationAccuracy accuracy = stringToLocationAccuracy(result);
-          aqiModel = AQIModel(preferredAccuracy: accuracy);
+          setState(() {
+            aqiModel = AQIModel(preferredAccuracy: accuracy);
+          });
+        } else {
+          setState(() {
+            aqiModel = AQIModel(preferredAccuracy: LocationAccuracy.low);
+          });
         }
       }
     });
@@ -42,9 +49,19 @@ class _LoadingScreenState extends State<LoadingScreen>
       if (result == ConnectivityResult.mobile ||
           result == ConnectivityResult.wifi) {
         getLocationData();
+
         setState(() {
           _bInternetErrorVisible = false;
         });
+      } else {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.BOTTOMSLIDE,
+          tittle: 'No Connection',
+          desc: 'Enable the wifi or mobile connectivity.',
+          btnCancelOnPress: () {},
+        ).show();
       }
     });
   }
@@ -61,13 +78,28 @@ class _LoadingScreenState extends State<LoadingScreen>
     // check if the user has set the home city
     String city = await getHomeCityPref();
 
-    var _aqiData = (city != "")
+    print('City : $city');
+    var _aqiData = (city != "" && city != null)
         ? await aqiModel.getCityAQI(city)
         : await aqiModel.getLocationAQI();
 
     if (_aqiData == 'SocketException') {
       _aqiData = "error";
 
+      // TODO: Some error
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        tittle: 'Server Error',
+        btnOkText: 'Retry',
+        btnOkOnPress: () {
+          // TODO: Check if it doesn't result in performance degradation.
+          getLocationData();
+        },
+        desc:
+            "Couldn't contact the server. Either the server or your internet is down.",
+      ).show();
       // since socket exception
 
     } else if (_aqiData['status'] != 'ok') {
